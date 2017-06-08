@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const gameCtrl = require('../controllers/gameCtrl');
+const gameCtrl = require('../controllers/game/gameCtrl');
 const util = require('../helpers/util');
 /* GET home page. */
 router.use('/main',util.authMain); //v

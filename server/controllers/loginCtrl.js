@@ -7,7 +7,7 @@ const login = (req,res) => {
   else if (typeof req.body.password === 'undefined') res.send({err:'Password must be filled'});
   else {
     User.findOne({email:req.body.email}, (err,user) => {
-      if (err || user === null) res.send('Invalid User')
+      if (err || user === null) res.send({err:'Invalid User'})
       else if (user !== null) {
         let user_dt = {
           email : user.email,
@@ -39,11 +39,11 @@ const register = (req,res) => {
       let err_msg = '';
       for (let error in err.errors) err_msg += err.errors[error].message+'\n';
       if (err.code == 11000) err_msg+= `Username exist`;
-      res.send(err_msg);
+      res.send({err:err_msg});
     } else {
       user.save((err_hash,user)=>{
-        if (err_hash) res.send('Hash password failed');
-        else res.send(`[SUCCESS][INSERT] ${user._id} inserted`);
+        if (err_hash) res.send({err:'Hash password failed'});
+        else res.send({scs:'User Inserted'});
       })
     };
   })

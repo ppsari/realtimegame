@@ -1,6 +1,7 @@
-let Game = require('../models/game');
-let User = require('../models/user');
-let util = require('../helpers/util');
+let Game = require('../../models/game');
+let User = require('../../models/user');
+let util = require('../../helpers/util');
+const socket = require('./broadcaster');
 
 const addUser = (req,res) => {
   util.getUserId(req.headers.token, (err,decoded) => {
@@ -123,7 +124,10 @@ const createGame = (req,res) => {
       let err_msg = '';
       for (let error in err.errors) err_msg += err.errors[error].message+'\n';
       res.send({err:err_msg})
-    } else res.send(game );
+    } else {
+      socket.writeUserData(game._id,false);
+      res.send(game );
+    }
   });
 }
 

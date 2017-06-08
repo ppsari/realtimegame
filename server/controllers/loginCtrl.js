@@ -16,7 +16,7 @@ const login = (req,res) => {
         };
         if (util.checkPassword(req.body.password,user.password)) {
           let token = util.createToken(user_dt);
-          res.send(`benar\n${token}`);
+          res.send({token:token});
         }
         else res.send({err:'password salah'});
       }

@@ -1,0 +1,51 @@
+{
+  "name": "realtimegame",
+  "version": "1.0.0",
+  "description": "realtime multiplechoice game",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ppsari/realtimegame.git"
+  },
+  "keywords": [
+    "firebase",
+    "vue",
+    "mongoose",
+    "trivia-api",
+    "nodemailer-api",
+    "nexmo-api",
+    "cron",
+    "kue"
+  ],
+  "author": "parelhutahaean -- ppsari -- Priambodo-Kurniawan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ppsari/realtimegame/issues"
+  },
+  "homepage": "https://github.com/ppsari/realtimegame#readme",
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "chai": "^4.0.2",
+    "chai-http": "^3.0.0",
+    "cookie-parser": "~1.4.3",
+    "cors": "^2.8.3",
+    "cron": "^1.2.1",
+    "crypto-js": "^3.1.9-1",
+    "debug": "~2.6.3",
+    "dotenv": "^4.0.0",
+    "express": "~4.15.2",
+    "jade": "~1.11.0",
+    "jsonwebtoken": "^7.4.1",
+    "kue": "^0.11.6",
+    "mocha": "^3.4.2",
+    "mongoose": "^4.10.5",
+    "morgan": "~1.8.1",
+    "nexmo": "^2.0.2",
+    "nodemailer": "^4.0.1",
+    "serve-favicon": "~2.4.2"
+  }
+}

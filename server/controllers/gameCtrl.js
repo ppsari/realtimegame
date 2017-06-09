@@ -1,4 +1,6 @@
 let Game = require('../models/game');
+let User = require('../models/user');
+const gameNotification = require('./cron/newGame');
 
 const getAll = (req,res) => {
   Game.find()
@@ -50,7 +52,18 @@ const createGame = (req,res) => {
       let err_msg = '';
       for (let error in err.errors) err_msg += err.errors[error].message+'\n';
       res.send({err:err_msg})
-    } else res.send(game );
+    } else {
+      User.find()
+      .populate('userList')
+      .exec( (err,users) => {
+        if (users) {
+          users.forEach(user => {
+            gameNotification.newGame(user, game.time);
+          })
+        }
+      })
+      res.send(game)
+    };
     // res.send(err? {err:err} : game);
   });
 }

@@ -1,108 +1,96 @@
-var CronJob = require('cron').CronJob;
-var kue = require('kue'), queue = kue.createQueue();
-var nodemailer = require('nodemailer');
-var nexmo = require('nexmo');
+'use strict'
 require('dotenv').config();
+const https = require('https');
+const cronJob = require('cron').CronJob;
+const nodemailer = require('nodemailer');
+const kue = require('kue');
+const queue = kue.createQueue();
 
-//console.log(process.env.PASSWORD);
-let transporter = nodemailer.createTransport({
-  service: 'gmail.com',
-  auth: {
-      user: process.env.EMAIL,
-      pass: process.env.PASSWORD
-  }
+const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
 });
 
-// objEmail = {from, to, subject, html}
+const afterRegister = (user) => {
+    if (user) {
+      let userRegister = new cronJob('* * * * * *' ,
+          function() {
+            console.log('scs to start');
+            sendEmail(user);
+            sendSMS({phone:user.phone, msg:`Hi ${user.name}, selamat bergabung di GameRealTime. Have fun!!!`});
+            this.stop();
+          },
+          () => { console.log('stop deh') },
+          true, /*start the job right now*/
+          'Asia/Jakarta' /*timeZone*/
+        );
+      // userRegister.start();
+    } else console.log('kirim user yang bener laa');
 
-function sendEmail(obj) {
-  var job = queue.create('notif', obj).save( function(err){
-     if( !err ) {
-       console.log("This is the result", job.data);
-     }
-  });
+}
 
-  queue.process('notif', function(job, done){
-    transporter.sendMail(job.data, function(error, info){
-      console.log("This is the result", job.data);
-      console.log("This is the info", info);
-       if(error){
-           return console.log(error);
-       }
-       console.log('Message sent: ' + info.response);
-     });
-     done();
+const sendEmail = (user) => {
+  createJOB('sendEmail',user,'critical');
+  queue.process('sendEmail',(job,done)=>{
+    let mailOptions = {
+        from: '"GameRealTime 👻" <noreply@gamerealtime.com>', // sender address
+        to: `${user.email}`,//`${user.email}`, // list of receivers
+        subject: 'Welcome ✔', // Subject line
+        text: `Hi ${user.name}, selamat bergabung di GameRealTime. Have fun!!!`, // plain text body
+        html: `Hi <b>${user.name}</b>,<br/><br/>Selamat bergabung di GameRealTime. Have fun!!!<br/><br/>Cheers,<br/>Team GameRealTime` // html body
+    };
+    transporter.sendMail(mailOptions, (err, info) => {
+      err ? done(err) : done();
+    });
+
   });
 }
 
-//objMessage = {from, to, text}
+const createJOB = (jobname,data,priority='low') => {
+  let job =
+    queue.create(jobname,data)
+    .priority(priority)
+    .attempts(5)
+    .save(err => console.log(err? err : job.id));
 
-function sendMessage(obj) {
-  obj.api_key = process.env.NEXMO_KEY;
-  obj.api_secret = process.env.NEXMO_SECRET;
-  console.log(obj);
-  var job = queue.create('notif', obj).save( function(err){
-     if( !err ) {
-       console.log("This is the result", job.data);
-     }
-  });
+  job.on('complete', res => console.log(`complete\n${res}`));
+  job.on('failed', err => console.log(err) );
+}
 
-  queue.process('notif', function(job, done){
-    var https = require('https');
-    var options = {
+const sendSMS = (user) => {
+  // let job =
+  createJOB('sendSMS',user,'normal')
+  queue.process('sendSMS', (job,done)=> {
+    let data = JSON.stringify({
+      api_key: process.env.NEXMO_KEY,
+      api_secret: process.env.NEXMO_SECRET,
+      to: job.data.phone,
+      from: 'BLOG_TDD',
+      text: job.data.msg
+    });
+    let options = {
      host: 'rest.nexmo.com',
      path: '/sms/json',
      port: 443,
      method: 'POST',
      headers: {
        'Content-Type': 'application/json',
-       'Content-Length': Buffer.byteLength(JSON.stringify(job.data))
+       'Content-Length': Buffer.byteLength(data)
      }
     };
-    var req = https.request(options);
-    req.write(JSON.stringify(job.data));
+    let req = https.request(options);
+    req.write(data);
     req.end();
-
-    var responseData = '';
-    req.on('response', function(res){
-     res.on('data', function(chunk){
-       responseData += chunk;
-     });
-
-     res.on('end', function(){
-       console.log(JSON.parse(responseData));
-     });
+    let responseData = '';
+    req.on('response', (res) => {
+      res.on('data', (chunk) => { responseData += chunk;});
+      res.on('end', () => { console.log(JSON.parse(responseData)); });
     });
     done();
   });
 }
 
-// obj = {fromEmail, toEmail, emailSubject, emailHTML, fromPhone, toPhone, messageText}
-
-function registerNotif(time, obj) {
-  var timeString = `${time.getMinutes() + 1} ${time.getHours())} ${time.getDate()} ${time.getMonth()} *`;
-  new CronJob(timeString, function() {
-    // if email address provided
-    if obj.hasOwnProperty(toEmail) {
-      let emailObj = {
-        from: obj.fromEmail,
-        to: obj.toEmail,
-        subject: obj.emailSubject,
-        html: obj.emailHTML
-      }
-      sendEmail(emailObj);
-    }
-    // if phone number provided
-    if obj.hasOwnProperty(toPhone) {
-      let phoneObj = {
-        from: obj.fromPhone,
-        to: obj.toPhone,
-        text: obj.phoneText
-      }
-      sendMessage(phoneObj);
-    }
-  }, null, true, 'Asia/Jakarta');
-
-module.exports = {
-  registerNotif
-}
+module.exports = afterRegister;

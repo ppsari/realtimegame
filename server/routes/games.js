@@ -3,8 +3,8 @@ const router = express.Router();
 const gameCtrl = require('../controllers/game/gameCtrl');
 const util = require('../helpers/util');
 /* GET home page. */
-router.use('/',util.authGame); //v
-router.use('/:id',util.authGame); //v
+// router.use('/',util.authGame); //v
+// router.use('/:id',util.authGame); //v
 
 // router.use('/main',util.authMain); //v
 // router.post('/main',gameCtrl.addUser); //v

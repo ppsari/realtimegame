@@ -46,7 +46,7 @@ const authMain = (req,res,next) => {
           ( x === 'login' || (decoded.role === x) || (x === 'id' && decoded.id == req.params.id ) )
         );
 
-      if (is_user_auth === -1) res.send(`User ${decoded.email} - role ${decoded.role} tak dapat mengakses ${path} ${method}`);
+      if (is_user_auth === -1) res.send({err:`User ${decoded.email} - role ${decoded.role} tak dapat mengakses ${path} ${method}`});
       else next();
     } else res.send({err:'You must login'});
   } else next();
@@ -67,7 +67,7 @@ const authGame = (req,res,next) => {
           ( x === 'login' || (decoded.role === x) || (x === 'id' && decoded.id == req.params.id ) )
         );
 
-      if (is_user_auth === -1) res.send(`User ${decoded.email} - role ${decoded.role} tak dapat mengakses ${path} ${method}`);
+      if (is_user_auth === -1) res.send({err:`User ${decoded.email} - role ${decoded.role} tak dapat mengakses ${path} ${method}`});
       else next();
     } else res.send({err:'You must login'});
   } else next();
@@ -88,7 +88,7 @@ const authUser = (req,res,next) => {
           ( x === 'login' || (decoded.role === x) || (x === 'id' && decoded.id == req.params.id ) )
         );
 
-      if (is_user_auth === -1) res.send(`User ${decoded.email} - role ${decoded.role} tak dapat mengakses ${path} ${method}`);
+      if (is_user_auth === -1) res.send({err:`User ${decoded.email} - role ${decoded.role} tak dapat mengakses ${path} ${method}`});
       else next();
     } else res.send({err:'You must login'});
   } else next();

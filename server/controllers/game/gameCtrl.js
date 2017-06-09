@@ -5,11 +5,17 @@ const socket = require('./broadcaster');
 
 const addUser = (req,res) => {
   util.getUserId(req.headers.token, (err,decoded) => {
-    console.log('add user ah')
+    console.log(req.body)
+    // console.log('add user ah')
     if (err) res.send({err:'Invalid token'});
     else if ( typeof req.body.game_id === 'undefined') res.send({err:'GameId must be filled'})
     else
       Game.findById(req.body.game_id, (err,game) => {
+        // console.log(err.message);
+
+        // console.log('-------------------------------');
+        // console.log(game);
+        // console.log('------------------------------xx');
         if (err) res.send({err:err.message})
         else {
           if (typeof game.userList === 'undefined') game.userList = [];
@@ -37,17 +43,24 @@ const addUser = (req,res) => {
 }
 
 const updUserScore = (req,res) => {
+  // console.log('--------------------------------------aaa')
   if ( typeof req.body.game_id === 'undefined') res.send({err:'GameId must be filled'})
   else if (typeof req.body.score === 'undefined') res.send({err:'Score must be filled'});
   else
     util.getUserId(req.headers.token, (err,decoded) => {
+      // console.log('-----------------------------------------1');
       if (err) res.send({err:'Invalid userId'})
       else
         Game.findById(req.body.game_id, (err,game) => {
+
+            // console.log('----------------------------xx');
+          // console.log(err);
+          // console.log(game);
           if (err) res.send({err:err.message})
           else if (typeof game.userList === 'undefined') res.send({err:'Invalid userId'});
           else {
             let idx = game.userList.findIndex((list) => list._user == decoded.id);
+            console.log('idx: '+idx)
             if (idx === -1) res.send({err:'Invalid userId'});
             else {
               //update User : totalScore, gameList

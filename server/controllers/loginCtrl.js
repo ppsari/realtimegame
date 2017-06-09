@@ -2,7 +2,7 @@ let User = require('../models/user');
 const util = require('../helpers/util');
 
 const login = (req,res) => {
-  console.log('halo')
+  // console.log('halo')
   if (typeof req.body.email === 'undefined') res.send({err:'Email must be filled'});
   else if (typeof req.body.password === 'undefined') res.send({err:'Password must be filled'});
   else {

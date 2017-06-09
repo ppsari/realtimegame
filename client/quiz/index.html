@@ -6,7 +6,9 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/chingyawhao/materialize-clockpicker/master/dist/css/materialize.clockpicker.css">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   </head>
   <body>
@@ -21,10 +23,18 @@
       });
       $('input#input_text, textarea#textarea1').characterCounter();
       $('select').material_select();
+      $('.timepicker').pickatime({
+        default: 'now',
+        twelvehour: false, // change to 12 hour AM/PM clock from 24 hour
+        donetext: 'OK',
+        autoclose: false,
+        vibrate: true // vibrate the device when dragging clock hand
+      });
     });
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+    <script src="https://cdn.rawgit.com/chingyawhao/materialize-clockpicker/master/dist/js/materialize.clockpicker.js"></script>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>

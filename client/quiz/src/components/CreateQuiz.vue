@@ -2,7 +2,6 @@
   <div id="create-quiz">
     <div class="card" >
       <div class="card-content">
-        <h5><strong>Create Quiz</strong></h5>
         <form>
           <div class="row">
             <div class="input-field col s12">

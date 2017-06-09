@@ -147,7 +147,7 @@ const createGame = (req,res) => {
       User.find({}, (err, users) => {
         if(err) console.log('Game notification failed');
         users.forEach(user => {
-          //notif.newGame(user, game.time);
+          notif.newGame(user, game.time);
         })
       })
       var time = game.time;

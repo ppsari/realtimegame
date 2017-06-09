@@ -6,6 +6,7 @@ var config = {
   authDomain: process.env.FIREBASE_authDomain ,
   databaseURL: process.env.FIREBASE_databaseURL ,
   storageBucket: process.env.FIREBASE_storageBucket ,
+  messagingSenderId: process.env.FIREBASE_senderId
 };
 
 firebase.initializeApp(config);
@@ -14,9 +15,10 @@ let database = firebase.database();
 
 function writeUserData(id, start) {
   database.ref('game/' + id).set({
-    id: id,
+    //id: id,
     start: start,
   });
+  console.log('Write ke firebase success');
 }
 
 //copy untuk ke listener

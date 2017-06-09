@@ -19,13 +19,13 @@
                   <form>
                     <div class="row">
                       <div class="input-field col s10 offset-s1">
-                        <input id="email" ref="email" type="email" class="validate" required>
+                        <input id="email" ref="lemail" type="email" class="validate" required>
                         <label class="loose-text" for="email">Email</label>
                       </div>
                     </div>
                     <div class="row">
                       <div class="input-field col s10 offset-s1">
-                        <input id="password" ref="password" type="password" class="validate" required>
+                        <input id="password" ref="lpassword" type="password" class="validate" required>
                         <label class="loose-text" for="password">Password</label>
                       </div>
                     </div>
@@ -35,7 +35,14 @@
                       </div>
                     </div>
                   </form>
-                  
+                  <form>
+                    <select>
+                      <option value="" disabled selected>Choose your option</option>
+                      <option value="1">Option 1</option>
+                      <option value="2">Option 2</option>
+                      <option value="3">Option 3</option>
+                    </select>
+                  </form>
                   <div class="alert" v-if="loginErr">
                     <p>username or password is wrong</p>
                   </div>
@@ -93,16 +100,17 @@
     name: 'login-register',
     methods: {
       login: function(){
-        let email = this.$refs.email.value
-        let password = this.$refs.password.value
-
+        let email = this.$refs.lemail.value
+        let password = this.$refs.lpassword.value
         this.loginErr = true
 
-        axios.post("http://localhost:3000/login/", {email: email, password: password})
+        axios.post("http://localhost:3000/login/",
+         {email: email, password: password})
         .then((response) => {
           if(response.data.token){
-            localStorage.setItem('token', response.data.token)
-            window.location.href = './'
+            window.localStorage.setItem('token', response.data.token)
+            console.log(response.data.token)
+            window.location.hash = 'dashboard';
           } else {
             this.loginErr = true
           }
@@ -113,12 +121,21 @@
         let email = this.$refs.email.value
         let password = this.$refs.password.value
         let name = this.$refs.name.value
-        let phone = this.$refs.phone.value
+        let phone = '+'+this.$refs.phone.value
 
         axios.post("http://localhost:3000/register/", {email: email, password: password, name: name, phone: phone})
-        .then(() => {
-          this.registerFlag = true,
-          location.reload();
+        .then((response) => {
+          console.log(response.data);
+
+          if (response.data.hasOwnProperty('err')) {
+            this.loginErr = true
+            this.errMessage = "something wrong"
+            console.log(err)
+          } else {
+            this.registerFlag = true,
+            location.reload();
+          }
+
         })
         .catch(err => {
           this.loginErr = true

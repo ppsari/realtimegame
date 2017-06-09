@@ -2,6 +2,7 @@ let Game = require('../../models/game');
 let User = require('../../models/user');
 let util = require('../../helpers/util');
 let notif = require('../cron/newGame');
+let timer = require('../cron/timer');
 const socket = require('./broadcaster');
 
 const addUser = (req,res) => {
@@ -132,6 +133,7 @@ const deleteGame = (req,res) => {
 }
 
 const createGame = (req,res) => {
+  console.log(req.body.time);
   let newGame = new Game(req.body);
   newGame.save((err,game) => {
     if (err) {
@@ -140,12 +142,17 @@ const createGame = (req,res) => {
       res.send({err:err_msg})
     } else {
       socket.writeUserData(game._id,false);
+      console.log('gametime '+game.time);
+      timer.setTimer(game._id, game.time, true);
       User.find({}, (err, users) => {
         if(err) console.log('Game notification failed');
         users.forEach(user => {
           notif.newGame(user, game.time);
         })
       })
+      var time = game.time;
+      time.setMinutes(time.getMinutes() + 2);
+      timer.setTimer(game._id, time, false);
       res.send(game );
     }
   });

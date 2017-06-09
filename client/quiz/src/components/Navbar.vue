@@ -4,7 +4,7 @@
       <a href="#!" class="brand-logo center">Hactiv Quiz</a>
       <ul class="left hide-on-med-and-down">
         <li><a href="./#/dashboard">Dashboard</a></li>
-        <li><a href="./#/create-quiz">Create Quiz</a></li>
+        <li v-if="role==='admin'"><a href="./#/create-quiz">Create Quiz</a></li>
         <li><a href="#">My Account</a></li>
       </ul>
     </div>
@@ -16,7 +16,8 @@
     name: 'navbar',
     data () {
       return {
-        menu: ""
+        menu: "",
+        role: window.location.role
       }
     }
   }

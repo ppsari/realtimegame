@@ -16,20 +16,25 @@ const transporter = nodemailer.createTransport({
 
 const newGame = (user, time) => {
     if (user) {
-      let userRegister = new cronJob('* * * * * *' ,
+      let createGame = new cronJob('* * * * * *' ,
           function() {
             console.log('scs to start');
             sendEmail(user, time);
             sendSMS({phone:user.phone, msg:`Hi, ${user.name}. Kami ingin memberitahu bahwa pada ${time} akan dimulai game baru. Silakan membuka aplikasi GameRealTime untuk ikutan main. Have fun!!!`});
             this.stop();
           },
-          () => { console.log('stop deh') },
+          () => {
+          },
           true, /*start the job right now*/
           'Asia/Jakarta' /*timeZone*/
         );
       // userRegister.start();
     } else console.log('kirim user yang bener laa');
 
+}
+
+const convertTimeToCronFormat = function(time) {
+  return `${time.getSeconds()} ${time.getMinutes()} ${time.getHours()} ${time.getDate()} ${time.getMonth()} ${time.getYear()}`
 }
 
 const sendEmail = (user, time) => {
@@ -68,7 +73,7 @@ const sendSMS = (user) => {
       api_key: process.env.NEXMO_KEY,
       api_secret: process.env.NEXMO_SECRET,
       to: job.data.phone,
-      from: 'BLOG_TDD',
+      from: 'GameRealTime',
       text: job.data.msg
     });
     let options = {

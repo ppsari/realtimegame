@@ -5,14 +5,11 @@ const kue = require('kue');
 const queue = kue.createQueue();
 const socket = require('../game/broadcaster');
 
-const setTimer = (gameId, time) => {
+const setTimer = (gameId, time, status) => {
   console.log('Ini memanggil set timer');
-  time.setMinutes(time.getMinutes() + 1)
-  var timeString = `${time.getMinutes() + 1} ${time.getHours() - 1} ${time.getDate()} ${time.getMonth()} *`;
-  console.log(timeString);
+  var timeString = `${time.getMinutes() + 1} ${time.getHours()} ${time.getDate()} ${time.getMonth()} *`;
   new cronJob(timeString, function() {
-    console.log('Ini mengubah status game menjadi true');
-    socket.writeUserData(gameId,true);
+    socket.writeUserData(gameId,status);
   }, null, true, 'Asia/Jakarta');
 }
 

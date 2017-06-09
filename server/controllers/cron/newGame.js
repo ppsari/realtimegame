@@ -33,9 +33,6 @@ const newGame = (user, time) => {
 
 }
 
-const convertTimeToCronFormat = function(time) {
-  return `${time.getSeconds()} ${time.getMinutes()} ${time.getHours()} ${time.getDate()} ${time.getMonth()} ${time.getYear()}`
-}
 
 const sendEmail = (user, time) => {
   createJOB('sendEmail',user,'critical');

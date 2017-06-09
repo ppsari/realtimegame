@@ -30,7 +30,8 @@ let gameSchema = new Schema({
   category: {
     type: Number,
     required: [true,'{PATH} must be filled']
-  }
+  },
+  question: [Schema.Types.Mixed]
 });
 
 

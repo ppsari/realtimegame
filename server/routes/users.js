@@ -4,8 +4,8 @@ const userCtrl = require('../controllers/userCtrl');
 const util = require('../helpers/util');
 /* GET home page. */
 
-// router.use(util.authUser);
-// router.use('/:id',util.authUser);
+router.use('/',util.authUser);//v
+router.use('/:id',util.authUser);//v
 
 router.get('/',userCtrl.getAll ); //v
 router.get('/:id',userCtrl.getById ); //v

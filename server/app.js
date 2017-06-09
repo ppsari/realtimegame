@@ -8,6 +8,7 @@ const cors = require('cors');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var games = require('./routes/games');
+var maingames = require('./routes/maingames');
 
 var app = express();
 
@@ -25,6 +26,7 @@ app.use(cors())
 app.use('/', index);
 app.use('/api/users', users);
 app.use('/api/games', games);
+app.use('/api/maingames',maingames);
 
 const mongoose = require('mongoose');
 

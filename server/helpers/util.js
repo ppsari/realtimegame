@@ -2,30 +2,96 @@ require('dotenv').config();
 const CryptoJS = require("crypto-js");
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.SECRET_KEY;
-const page = {}
 
-const authGame = (req,res,next) => {}
+const pageUser = {
+  hasParam: {
+    GET : ['id'],
+    PUT: ['admin','id'],
+    DELETE: ['admin']
+  },
+  noParam: {
+    GET: ['admin']
+  }
+}
+
+const pageGame = {
+  hasParam : {
+    PUT: ['admin'],
+    DELETE: ['admin']
+  },
+  noParam: {
+    POST:['admin'],
+    GET:['admin']
+  }
+}
+
+const pageMain = {
+  noParam: {
+    POST: ['login'],
+    PUT: ['login']
+  }
+}
+const authMain = (req,res,next) => {
+  // console.log('lagi auth main')
+  let path = 'api/games/main';
+  let method = req.method;
+  let is_user_auth = -1;
+  let user_auth = (typeof req.params.id !== 'undefined'? pageMain.hasParam[method] : pageMain.noParam[method]);
+  if (user_auth) {
+    let token = req.headers.token;
+    if (token) {
+      let decoded = jwt.verify(token,SECRET_KEY);
+      if (user_auth)
+        is_user_auth = user_auth.findIndex((x)=>
+          ( x === 'login' || (decoded.role === x) || (x === 'id' && decoded.id == req.params.id ) )
+        );
+
+      if (is_user_auth === -1) res.send({err:`User ${decoded.email} - role ${decoded.role} tak dapat mengakses ${path} ${method}`});
+      else next();
+    } else res.send({err:'You must login'});
+  } else next();
+}
+
+const authGame = (req,res,next) => {
+  // console.log('lagi auth game')
+  let path = 'api/games/';
+  let method = req.method;
+  let is_user_auth = -1;
+  let user_auth = (typeof req.params.id !== 'undefined'? pageGame.hasParam[method] : pageGame.noParam[method]);
+  if (user_auth) {
+    let token = req.headers.token;
+    if (token) {
+      let decoded = jwt.verify(token,SECRET_KEY);
+      if (user_auth)
+        is_user_auth = user_auth.findIndex((x)=>
+          ( x === 'login' || (decoded.role === x) || (x === 'id' && decoded.id == req.params.id ) )
+        );
+
+      if (is_user_auth === -1) res.send({err:`User ${decoded.email} - role ${decoded.role} tak dapat mengakses ${path} ${method}`});
+      else next();
+    } else res.send({err:'You must login'});
+  } else next();
+}
+
 const authUser = (req,res,next) => {
-  // let path = req.path;
-  // let method = req.method;
-  // let idx = page_user.findIndex((x)=> x.name === path);
-  // let user_auth;
-  // if (idx !== -1) {
-  //   let token = req.headers.token;
-  //   if (token) {
-  //     let decoded = jwt.verify(token,SECRET_KEY);
-  //     user_auth = (typeof req.params.id !== 'undefined'? page_user[idx].hasParam[method] : page_user[idx].noParam[method]);
-  //     let is_user_auth = -1;
-  //     if (user_auth)
-  //       is_user_auth = user_auth.findIndex((x)=>
-  //         ( x === 'login' || (decoded.role === x) || (x === 'id' && decoded.id == req.params.id ) )
-  //       );
-  //
-  //     if (is_user_auth === -1) res.send(`User ${decoded.username} - role ${decoded.role} tak dapat mengakses ${path} ${method}`);
-  //     else next();
-  //   } else res.send('You must login');
-  // }
-  // else next();
+  // console.log('lagi auth user')
+  let path = 'api/users/';
+  let method = req.method;
+  let is_user_auth = -1;
+  let user_auth = (typeof req.params.id !== 'undefined'? pageUser.hasParam[method] : pageUser.noParam[method]);
+  if (user_auth) {
+    let token = req.headers.token;
+    if (token) {
+      let decoded = jwt.verify(token,SECRET_KEY);
+      if (user_auth)
+        is_user_auth = user_auth.findIndex((x)=>
+          ( x === 'login' || (decoded.role === x) || (x === 'id' && decoded.id == req.params.id ) )
+        );
+
+      if (is_user_auth === -1) res.send({err:`User ${decoded.email} - role ${decoded.role} tak dapat mengakses ${path} ${method}`});
+      else next();
+    } else res.send({err:'You must login'});
+  } else next();
 }
 
 
@@ -56,6 +122,7 @@ const checkPassword = (password,hashPassword) => {
 }
 
 module.exports = {
+  authMain,
   authUser,
   authGame,
   hashPassword,

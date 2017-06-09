@@ -3,12 +3,12 @@ const util = require('../helpers/util');
 const afterRegister = require('./cron/afterRegister')
 
 const login = (req,res) => {
-  console.log('halo')
+  // console.log('halo')
   if (typeof req.body.email === 'undefined') res.send({err:'Email must be filled'});
   else if (typeof req.body.password === 'undefined') res.send({err:'Password must be filled'});
   else {
     User.findOne({email:req.body.email}, (err,user) => {
-      if (err || user === null) res.send('Invalid User')
+      if (err || user === null) res.send({err:'Invalid User'})
       else if (user !== null) {
         let user_dt = {
           email : user.email,
@@ -17,7 +17,7 @@ const login = (req,res) => {
         };
         if (util.checkPassword(req.body.password,user.password)) {
           let token = util.createToken(user_dt);
-          res.send(`benar\n${token}`);
+          res.send({token:token});
         }
         else res.send({err:'password salah'});
       }
@@ -40,13 +40,13 @@ const register = (req,res) => {
       let err_msg = '';
       for (let error in err.errors) err_msg += err.errors[error].message+'\n';
       if (err.code == 11000) err_msg+= `Username exist`;
-      res.send(err_msg);
+      res.send({err:err_msg});
     } else {
       user.save((err_hash,user)=>{
-        if (err_hash) res.send('Hash password failed');
+        if (err_hash) res.send({err:'Hash password failed'});
         else {
           afterRegister(user)
-          res.send(`[SUCCESS][INSERT] ${user._id} inserted`);
+          res.send({scs:'User Inserted'});
         }
       })
     };

@@ -9,7 +9,8 @@ let userSchema = new Schema({
     validate: {
       validator: function(val){ return /\w{5,20}\@\w{3,20}\.\w{3,20}/.test(val)},
       message: `Invalid {PATH}`
-    }
+    },
+    unique: true
   },
   name: {
     type : String,

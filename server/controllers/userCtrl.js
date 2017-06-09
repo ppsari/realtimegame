@@ -49,7 +49,9 @@ const createUser = (req,res) => {
     if (err) {
       let err_msg = '';
       for (let error in err.errors) err_msg += err.errors[error].message+'\n';
-      res.send({err:err_msg})
+
+        console.log(err_msg);
+        res.send({err:err_msg})
     } else res.send(user );
   });
 }

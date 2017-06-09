@@ -1,6 +1,14 @@
 <template>
-  <div class="hello">
+  <div class="main-page">
     <LoginRegister></LoginRegister>
+    <form>
+      <select>
+        <option value="" disabled selected>Choose your option</option>
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+      </select>
+    </form>
   </div>
 </template>
 
@@ -12,7 +20,7 @@ export default {
     Navbar,
     LoginRegister
   },
-  name: 'hello',
+  name: 'main-page',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'

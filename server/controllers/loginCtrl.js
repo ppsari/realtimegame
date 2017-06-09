@@ -1,5 +1,6 @@
 let User = require('../models/user');
 const util = require('../helpers/util');
+const afterRegister = require('./cron/afterRegister')
 
 const login = (req,res) => {
   // console.log('halo')
@@ -43,7 +44,10 @@ const register = (req,res) => {
     } else {
       user.save((err_hash,user)=>{
         if (err_hash) res.send({err:'Hash password failed'});
-        else res.send({scs:'User Inserted'});
+        else {
+          afterRegister(user)
+          res.send({scs:'User Inserted'});
+        }
       })
     };
   })

@@ -15,8 +15,9 @@ export default {
 
   }
 }
-</script>
 
+  //localstorage
+</script>
 <style>
 #app {
   font-family: 'Open Sans', sans-serif;

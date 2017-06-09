@@ -1,11 +1,34 @@
 <template>
   <div id="create-quiz">
+    <div class="quizList">
+      <table class="bordered">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Time</th>
+            <th>Difficulty</th>
+            <th>Category</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="gm in games" :id="gm._id" :category="gm.category" :name="gm.name" :difficulty="gm.difficulty" :date="gm.time" :number="gm.question">
+            <td>{{ gm.name }}</td>
+            <td>{{ gm.time }}</td>
+            <td>{{ gm.difficulty }}</td>
+            <td>{{ gm.category }}</td>
+            <td><i class="material-icon" @click="editGame(gm._id)">edit</i><i class="material-icon" @click="deleteGame(gm._id)">delete</i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="card" >
       <div class="card-content">
         <h5><strong>Create Quiz</strong></h5>
         <form>
           <div class="row">
             <div class="input-field col s12">
+              <input id="_id" ref="_id" type="hidden">
               <input id="NameQuiz" ref="name" type="text" class="validate" data-length="10" required>
               <label for="NameQuiz">Enter Quiz Name</label>
             </div>
@@ -22,7 +45,7 @@
               <label for="number">Number of Question</label>
             </div>
             <div class="input-field col s12">
-              <select ref="category" required>
+              <select ref="category" required id="category">
                 <option value="any">Any Category</option>
         				<option value="9">General Knowledge</option>
         				<option value="10">Entertainment: Books</option>
@@ -52,7 +75,7 @@
               <label></label>
             </div>
             <div class="input-field col s12">
-              <select ref="dificulty" required>
+              <select ref="dificulty" required id="dificulty">
                 <option value="" disabled selected>Select Dificulty</option>
                 <option value="easy">easy</option>
                 <option value="medium">medium</option>
@@ -69,6 +92,7 @@
         </form>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -78,27 +102,122 @@ export default {
 //name of the component
   name: 'create-quiz',
   //function that returns data to the components
-  data : function (){
-  return{
-  }
+  data (){
+    return {
+      games : []
+    }
+  },
+  created: function() {
+    let token = window.localStorage.token;
+    axios.defaults.headers.common['token'] = token;
+    // console.log('created');
+    // console.log(this.games);
+    this.getGames();
   },
   methods: {
+    getGames: function() {
+      let _self = this;
+      axios.get(`http://localhost:3000/api/games/`)
+      .then((res)=>{
+        _self.games = res.data;
+      })
+      .catch(err=> {console.log(err)})
+    },
+    editGame: function(id) {
+      // console.log(id+'____id')
+      let tr = document.getElementById(`${id}`);
+      document.getElementById('_id').value = `${id}`;
+      let arrDate = tr.getAttribute('date').split('T');
+      // console.log(arrDate)
+      if(arrDate.length > 0) {
+        document.getElementById('timepicker_ampm_dark').value = arrDate[1];
+        document.getElementById('time').value = arrDate[0];
+
+        console.log(arrDate)
+      }
+      document.getElementById('NameQuiz').value = tr.getAttribute('name');
+      $("#category").val(tr.getAttribute('category')).material_select()
+      $("#dificulty").val(tr.getAttribute('difficulty')).material_select()
+      document.getElementById('number').value = tr.getAttribute('number');
+
+    },
+    deleteGame: function(id){
+      let _self = this;
+      axios.defaults.headers.common['token'] = window.localStorage.token;
+
+      axios.delete(`http://localhost:3000/api/games/${id}`)
+      .then((res)=>{
+        _self.getGames();
+      })
+      .catch(err=> {console.log(err)})
+    },
     create: function(){
       let name = this.$refs.name.value
       let date = this.$refs.date.value
       let time = this.$refs.time.value
 
-      console.log(time);
+      time = new Date(`${date} ${time}`).toISOString()
+
+      // console.log(time);
       console.log(date);
 
       let gameLength = this.$refs.number.value
       let category = this.$refs.category.value
       let dificulty = this.$refs.dificulty.value
 
-      if(name !== undifined && date !==undifined && time !==undifined && gameLength !== undifined && category !== undifined && dificulty !== undifined){
+      axios.defaults.headers.common = {Accept: "application/json, text/plain, */*"}
+      if( typeof name !== 'undefined' &&  typeof date !=='undefined' &&  typeof time !=='undefined' &&  typeof gameLength !== 'undefined' &&  typeof category !== 'undefined' &&  typeof dificulty !== 'undefined'){
         axios.get(`https://opentdb.com/api.php?amount=${gameLength}&category=${category}&difficulty=${dificulty}&type=multiple`)
         .then(response => {
-          let question = response.data.results
+
+          axios.defaults.headers.common['token'] = localStorage.token;
+          let token = window.localStorage.token || '';
+          if (response.data.hasOwnProperty('results')) {
+            let question = response.data.results
+            let rnd;
+            question = question.map((quest)=>{
+              rnd = Math.floor(Math.random()*4 + 0);
+              quest.incorrect_answers.splice(rnd,0,quest.correct_answer);
+              return quest;
+            });
+
+            let game = {
+              name: name,
+              time: time,
+              difficulty:dificulty,
+              category:category,
+              question:question
+            }
+
+            let _self = this;
+            let _id = document.getElementById('_id').value;
+            if (_id.value !== '') {
+              axios.put(`http://localhost:3000/api/games/${_id}`,game)
+              .then((res)=>{
+
+                console.log(res.data);
+                _self.getGames();
+                $('input').val('');
+                $('select').val('').material_select();
+              })
+              .catch(err=> {console.log(err)})
+              _id.value = '';
+              console.log('edit data');
+            } else {
+              _id.value = '';
+              axios.post('http://localhost:3000/api/games',game)
+              .then((res)=>{
+                console.log(res.data);
+                _self.getGames();
+              })
+              .catch(err=> {console.log(err)})
+              console.log('save data');
+            }
+
+          }
+
+          // console.log(question)
+
           // axios.post(tolong lanjutin pop)
         })
         .catch(err => console.log(err))

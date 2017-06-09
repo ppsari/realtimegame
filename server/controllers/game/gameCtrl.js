@@ -1,6 +1,7 @@
 let Game = require('../../models/game');
 let User = require('../../models/user');
 let util = require('../../helpers/util');
+let notif = require('../cron/newGame');
 const socket = require('./broadcaster');
 
 const addUser = (req,res) => {
@@ -139,6 +140,12 @@ const createGame = (req,res) => {
       res.send({err:err_msg})
     } else {
       socket.writeUserData(game._id,false);
+      User.find({}, (err, users) => {
+        if(err) console.log('Game notification failed');
+        users.forEach(user => {
+          notif.newGame(user, game.time);
+        })
+      })
       res.send(game );
     }
   });

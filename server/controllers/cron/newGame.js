@@ -14,14 +14,13 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const afterRegister = (user) => {
-  console.log(process.env)
+const newGame = (user, time) => {
     if (user) {
       let userRegister = new cronJob('* * * * * *' ,
           function() {
             console.log('scs to start');
-            sendEmail(user);
-            sendSMS({phone:user.phone, msg:`Hi ${user.name}, selamat bergabung di GameRealTime. Have fun!!!`});
+            sendEmail(user, time);
+            sendSMS({phone:user.phone, msg:`Hi, ${user.name}. Kami ingin memberitahu bahwa pada ${time} akan dimulai game baru. Silakan membuka aplikasi GameRealTime untuk ikutan main. Have fun!!!`});
             this.stop();
           },
           () => { console.log('stop deh') },
@@ -33,15 +32,15 @@ const afterRegister = (user) => {
 
 }
 
-const sendEmail = (user) => {
+const sendEmail = (user, time) => {
   createJOB('sendEmail',user,'critical');
   queue.process('sendEmail',(job,done)=>{
     let mailOptions = {
         from: '"GameRealTime 👻" <noreply@gamerealtime.com>', // sender address
         to: `${user.email}`,//`${user.email}`, // list of receivers
-        subject: 'Welcome ✔', // Subject line
-        text: `Hi ${user.name}, selamat bergabung di GameRealTime. Have fun!!!`, // plain text body
-        html: `Hi <b>${user.name}</b>,<br/><br/>Selamat bergabung di GameRealTime. Have fun!!!<br/><br/>Cheers,<br/>Team GameRealTime` // html body
+        subject: 'Incoming Game', // Subject line
+        text: `Hi ${user.name}, apa kabar? Kami ingin memberitahu bahwa pada ${time} akan dimulai game baru. Silakan membuka aplikasi GameRealTime untuk ikutan main. Have fun!!!`, // plain text body
+        html: `Hi <b>${user.name}</b>,<br/><br/>Kami ingin memberitahu bahwa pada ${time} akan dimulai game baru. Silakan membuka aplikasi GameRealTime untuk ikutan main. Have fun!!!<br/><br/>Cheers,<br/>Team GameRealTime` // html body
     };
     transporter.sendMail(mailOptions, (err, info) => {
       err ? done(err) : done();
@@ -94,4 +93,6 @@ const sendSMS = (user) => {
   });
 }
 
-module.exports = afterRegister;
+module.exports = {
+  newGame
+};

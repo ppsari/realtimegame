@@ -100,9 +100,13 @@
          {email: email, password: password})
         .then((response) => {
           if(response.data.token){
-            window.localStorage.setItem('token', response.data.token)
-            console.log(response.data.token)
+            console.log(response.data)
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('role',response.data.role);
+            localStorage.setItem('_id',response.data._id);
+            console.log(response.data._id)
             window.location.hash = 'dashboard';
+
           } else {
             this.loginErr = true
           }

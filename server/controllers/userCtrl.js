@@ -2,7 +2,7 @@ let User = require('../models/user');
 
 const getAll = (req,res) => {
   User.find()
-  .populate('userList')
+  .populate('')
   .exec( (err,users) => {
     res.send(err? {err:err.message} : users );
   })
@@ -10,7 +10,7 @@ const getAll = (req,res) => {
 
 const getById = (req,res) => {
   User.findById(req.params.id)
-  .populate('userList')
+  .populate('gameList.game_id')
   .exec( (err,user) => {
     res.send(err? {err:err.message} : user );
   })

@@ -49,7 +49,12 @@ let userSchema = new Schema({
     type: Number,
     default: 0
   },
-  gameList: [{type:Schema.Types.ObjectId, ref: 'Game'}]
+  gameList: [
+    {
+      game_id:{type:Schema.Types.ObjectId, ref: 'Game'},
+      score:Number
+    }
+  ]
 });
 
 userSchema.pre('save', function(next) {

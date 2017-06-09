@@ -21,12 +21,13 @@ const addUser = (req,res) => {
         if (err) res.send({err:err.message})
         else {
           if (typeof game.userList === 'undefined') game.userList = [];
-          let idx = game.userList.findIndex(list => list._user == decoded.id);
-          if (idx === -1) {
+          console.log(game.userList);
+          // let idx = game.userList.findIndex(list => list.game_id == decoded.id);
+          if (game.userList) {
             User.findById(decoded.id, (err,user)=>{
               if (err) res.send({err:'UserId is not exist'});
               else {
-                user.gameList.push(req.body.game_id);
+                user.gameList.push({game_id: req.body.game_id, score:0});
                 user.save((err,updUser) => {
                   if (err) res.send({err:'Failed to insert gameList to User'})
                   else {
@@ -63,14 +64,18 @@ const updUserScore = (req,res) => {
           else {
             let idx = game.userList.findIndex((list) => list._user == decoded.id);
             console.log('idx: '+idx)
-            if (idx === -1) res.send({err:'Invalid userId'});
+            if (! game.userList) res.send({err:'Invalid userId'});
             else {
               //update User : totalScore, gameList
               //update Game: userList
               User.findById(decoded.id, (err,user)=>{
                 if (err) res.send({err:'UserId is not exist'});
                 else {
+                  // let idx = game.userList.findIndex(g => g._user == r);
+                  // console.log('put '+idx);
+                  if (idx !== -1) user.gameList[idx].score = req.body.score
                   user.totalScore += parseInt(req.body.score);
+                    //
                   user.save((err,updUser) => {
                     if (err) res.send({err:'Failed to update totalScore to User'})
                     else {

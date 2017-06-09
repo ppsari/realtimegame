@@ -1,22 +1,38 @@
 <template>
   <div class="dashboard">
-    <div class="container">
+    <Navbar></Navbar>
+    <div class="container page">
       <div class="row">
-        <div class="col s12 m6 offset-m6">
-          <CreateQuiz></CreateQuiz>
+        <div class="col m4">
+          <h5><strong>Your Profile</strong></h5>
+          <ProfileCard></ProfileCard>
+          <HistoryQuiz></HistoryQuiz>
+        </div>
+        <div class="col s12 m8">
+          <h5><strong>Available Quiz</strong></h5>
+          <AvailableQuiz></AvailableQuiz>
         </div>
       </div>
     </div>
+    <PageFooter></PageFooter>
   </div>
 </template>
 
 <script>
 import CarouselList from './CarouselList'
-import CreateQuiz from './CreateQuiz'
+import Navbar from './Navbar'
+import PageFooter from './PageFooter'
+import AvailableQuiz from './AvailableQuiz'
+import ProfileCard from './ProfileCard'
+import HistoryQuiz from './HistoryQuiz'
 export default {
   components: {
     CarouselList,
-    CreateQuiz
+    Navbar,
+    PageFooter,
+    AvailableQuiz,
+    ProfileCard,
+    HistoryQuiz
   },
   name: 'dashboard',
   data () {
@@ -32,7 +48,11 @@ export default {
 h1, h2 {
   font-weight: normal;
 }
-
+h1.title {
+  font-weight: 800;
+  text-align: right;
+  color: teal;
+}
 ul {
   list-style-type: none;
   padding: 0;

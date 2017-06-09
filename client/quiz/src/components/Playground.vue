@@ -2,8 +2,12 @@
   <div class="playground">
     <div class="container">
       <div class="row">
-        <div class="col s12 m6 offset-m3">
+        <div class="col s12 m6">
           <Quiz></Quiz>
+        </div>
+        <div class="col m4">
+          <ListPlayer></ListPlayer>
+          <LiveComment></LiveComment>
         </div>
       </div>
     </div>
@@ -12,9 +16,13 @@
 
 <script>
 import Quiz from './Quiz'
+import ListPlayer from './ListPlayer'
+import LiveComment from './LiveComment'
 export default {
   components: {
-    Quiz
+    Quiz,
+    ListPlayer,
+    LiveComment
   },
   name: 'playground',
   data () {

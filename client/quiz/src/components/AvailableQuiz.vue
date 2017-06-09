@@ -1,21 +1,18 @@
 <template>
-  <div class="main-page">
-    <LoginRegister></LoginRegister>
+  <div class="available-quiz">
+    <QuizeCard></QuizeCard>
   </div>
 </template>
 
 <script>
-import Navbar from './Navbar'
-import LoginRegister from './LoginRegister'
+import QuizeCard from './QuizeCard'
 export default {
   components: {
-    Navbar,
-    LoginRegister
+    QuizeCard
   },
-  name: 'main-page',
+  name: 'available-quiz',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
     }
   }
 }
